@@ -37,16 +37,22 @@ public class Main {
         }
       }
 
-      Map<String, List<Transaction>> dataMap = buildDataMap(results);
+      Map<String, List<Transaction>> monthTransactionMap = buildMonthTransactionMap(results);
 
-      dataMap.forEach(Main::printMonthSummary);
+      JsonObject[] summaries = monthTransactionMap
+        .entrySet()
+        .stream()
+        .map(s -> buildSummary(s.getKey(), s.getValue()))
+        .toArray(JsonObject[]::new);
+
+      Arrays.stream(summaries).forEach(System.out::println);
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
   }
 
-  private static void printMonthSummary(String dateKey, List<Transaction> transactions) {
+  private static JsonObject buildSummary(String dateKey, List<Transaction> transactions) {
     double credits = transactions
       .stream()
       .filter(transaction -> transaction.getAmount() > 0)
@@ -64,14 +70,12 @@ public class Main {
       .add("income", credits)
       .build();
 
-    JsonObject result = Json.createObjectBuilder()
+    return Json.createObjectBuilder()
       .add(dateKey, monthSummary)
       .build();
-
-    System.out.println(result);
   }
 
-  private static Map<String, List<Transaction>> buildDataMap(JsonArray results) {
+  private static Map<String, List<Transaction>> buildMonthTransactionMap(JsonArray results) {
 
     Map<String, List<Transaction>> monthlyTransactions = new HashMap<>();
 
