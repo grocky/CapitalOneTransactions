@@ -73,7 +73,7 @@ public final class Main {
       .mapToDouble(Transaction::getAmount)
       .sum();
 
-    Summary summary = new Summary(credits, debits);
+    Summary summary = new Summary(credits, Math.abs(debits));
 
     return new LabeledSummary(dateKey, summary);
   }
