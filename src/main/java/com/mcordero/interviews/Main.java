@@ -31,7 +31,13 @@ public final class Main {
    */
   public static void main(final String[] args) {
 
-    LevelLabsClient client = new LevelLabsClient(1110590645, "AppTokenForInterview");
+    LevelLabsClient client = new LevelLabsClient(
+      1110590645,
+      "AppTokenForInterview",
+      "interview@levelmoney.com",
+      "password2"
+    );
+
     List<Transaction> transactions = client.getAllTransactions();
     Map<String, List<Transaction>> monthTransactionMap = buildMonthTransactionMap(transactions);
 
