@@ -9,15 +9,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class LevelLabsClient {
 
@@ -45,22 +39,16 @@ public class LevelLabsClient {
     HttpEntity requestBody = this.buildEntity(req);
     postRequest.setEntity(requestBody);
 
-    JsonObject responseBody;
-
+    TransactionResponse response;
     try {
-      HttpResponse response = this.client.execute(postRequest);
-      responseBody = this.extractJsonBody(response);
+      HttpResponse httpResponse = this.client.execute(postRequest);
+      response = new TransactionResponse(httpResponse);
     } catch (IOException e) {
-      System.out.println(e.getMessage());
-      responseBody = Json.createObjectBuilder()
-        .add("transactions", Json.createArrayBuilder().build()).build();
+      System.out.println("Error sending http request: " + e.getMessage());
+      response = new TransactionResponse();
     }
 
-    return responseBody
-      .getJsonArray("transactions")
-      .stream()
-      .map(t -> new Transaction((JsonObject) t))
-      .collect(Collectors.toList());
+    return response.getTransactions();
   }
 
   private HttpEntity buildEntity(final Object body) {
@@ -72,9 +60,4 @@ public class LevelLabsClient {
     }
   }
 
-  private JsonObject extractJsonBody(final HttpResponse response) throws IOException {
-    InputStream targetStream = new BufferedInputStream((response.getEntity().getContent()));
-    JsonReader rdr = Json.createReader(targetStream);
-    return rdr.readObject();
-  }
 }
