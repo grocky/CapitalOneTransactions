@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -39,20 +40,22 @@ public class Main {
 
       Map<String, List<Transaction>> monthTransactionMap = buildMonthTransactionMap(results);
 
-      JsonObject[] summaries = monthTransactionMap
+      List<LabledJsonObject> summaries = monthTransactionMap
         .entrySet()
         .stream()
         .map(s -> buildSummary(s.getKey(), s.getValue()))
-        .toArray(JsonObject[]::new);
+        .collect(Collectors.toList());
 
-      Arrays.stream(summaries).forEach(System.out::println);
+      summaries.add(buildAverageSummary(summaries));
+
+      summaries.forEach(System.out::println);
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
   }
 
-  private static JsonObject buildSummary(String dateKey, List<Transaction> transactions) {
+  private static LabledJsonObject buildSummary(String dateKey, List<Transaction> transactions) {
     double credits = transactions
       .stream()
       .filter(transaction -> transaction.getAmount() > 0)
@@ -65,14 +68,25 @@ public class Main {
       .mapToDouble(Transaction::getAmount)
       .sum();
 
-    JsonObject monthSummary = Json.createObjectBuilder()
-      .add("spent", debits)
-      .add("income", credits)
-      .build();
+    TransactionSummary summary = new TransactionSummary(credits, debits);
 
-    return Json.createObjectBuilder()
-      .add(dateKey, monthSummary)
-      .build();
+    return new LabledJsonObject(dateKey, summary);
+  }
+
+  private static LabledJsonObject buildAverageSummary(List<LabledJsonObject> summaries) {
+    OptionalDouble averageCredits = summaries
+      .stream()
+      .mapToDouble(summary -> summary.getSummary().getCredits())
+      .average();
+
+    OptionalDouble averageDebits = summaries
+      .stream()
+      .mapToDouble(summary -> summary.getSummary().getDebits())
+      .average();
+
+    TransactionSummary averageSummary = new TransactionSummary(averageCredits.orElse(0.0), averageDebits.orElse(0.0));
+
+    return new LabledJsonObject("average", averageSummary);
   }
 
   private static Map<String, List<Transaction>> buildMonthTransactionMap(JsonArray results) {
