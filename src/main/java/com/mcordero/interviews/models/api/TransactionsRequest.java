@@ -4,44 +4,29 @@ import javax.json.Json;
 import javax.json.JsonObject;
 
 public class TransactionsRequest {
+
   private int uid;
   private String token;
   private String apiToken;
-  private boolean jsonStrictMode;
-  private boolean jsonVerbostResponse;
+  private boolean jsonStrictMode = true;
+  private boolean jsonVerbostResponse = true;
 
-  public TransactionsRequest(
+  TransactionsRequest(final int uid, final String apiToken, final String token) {
+    this.uid = uid;
+    this.token = token;
+    this.apiToken = apiToken;
+  }
+
+  TransactionsRequest(
     final int uid,
     final String token,
     final String apiToken,
     final boolean jsonStrictMode,
     final boolean jsonVerbostResponse
   ) {
-    this.uid = uid;
-    this.token = token;
-    this.apiToken = apiToken;
+    this(uid, apiToken, token);
     this.jsonStrictMode = jsonStrictMode;
     this.jsonVerbostResponse = jsonVerbostResponse;
-  }
-
-  public final int getUid() {
-    return this.uid;
-  }
-
-  public final String getToken() {
-    return this.token;
-  }
-
-  public final String getApiToken() {
-    return this.apiToken;
-  }
-
-  public final boolean isJsonStrictMode() {
-    return this.jsonStrictMode;
-  }
-
-  public final boolean isJsonVerbostResponse() {
-    return this.jsonVerbostResponse;
   }
 
   public final JsonObject toJson() {
