@@ -2,8 +2,8 @@
 package com.mcordero.interviews;
 
 import com.mcordero.interviews.models.LabeledSummary;
-import com.mcordero.interviews.models.api.LevelLabsClient;
-import com.mcordero.interviews.models.api.Transaction;
+import com.levelmoney.api.LevelLabsClient;
+import com.levelmoney.api.models.Transaction;
 import com.mcordero.interviews.models.Summary;
 
 import java.util.ArrayList;

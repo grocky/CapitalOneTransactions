@@ -1,4 +1,4 @@
-package com.mcordero.interviews.models.api;
+package com.levelmoney.api.models;
 
 import org.apache.http.HttpResponse;
 
@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class TransactionResponse extends Response {
+public class TransactionResponse extends Response {
   private List<Transaction> transactions;
 
-  TransactionResponse() {
+  public TransactionResponse() {
     this.transactions = new ArrayList<>();
   }
 
-  TransactionResponse(final HttpResponse response) {
+  public TransactionResponse(final HttpResponse response) {
     try {
       JsonObject body = this.extractJsonBody(response);
       this.transactions = body.getJsonArray("transactions")
@@ -28,7 +28,7 @@ class TransactionResponse extends Response {
     }
   }
 
-  final List<Transaction> getTransactions() {
+  public final List<Transaction> getTransactions() {
     return this.transactions;
   }
 

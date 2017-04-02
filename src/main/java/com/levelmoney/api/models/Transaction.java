@@ -1,4 +1,4 @@
-package com.mcordero.interviews.models.api;
+package com.levelmoney.api.models;
 
 import javax.json.JsonObject;
 import java.text.ParseException;

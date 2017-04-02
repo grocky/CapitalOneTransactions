@@ -1,4 +1,4 @@
-package com.mcordero.interviews.models.api;
+package com.levelmoney.api.models;
 
 import org.apache.http.HttpResponse;
 

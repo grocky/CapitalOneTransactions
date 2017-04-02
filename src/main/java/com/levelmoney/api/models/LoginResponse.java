@@ -1,11 +1,11 @@
-package com.mcordero.interviews.models.api;
+package com.levelmoney.api.models;
 
 import org.apache.http.HttpResponse;
 
 import javax.json.JsonObject;
 import java.io.IOException;
 
-class LoginResponse extends Response {
+public class LoginResponse extends Response {
   private String error;
   private int uid;
   private String token;
@@ -13,11 +13,11 @@ class LoginResponse extends Response {
   private String aggStatus;
   private boolean hasAccountsLinked;
 
-  LoginResponse() {
+  public LoginResponse() {
 
   }
 
-  LoginResponse(final HttpResponse response) {
+  public LoginResponse(final HttpResponse response) {
     try {
       JsonObject json = this.extractJsonBody(response);
       this.error = json.getString("error");
@@ -35,7 +35,7 @@ class LoginResponse extends Response {
     return this.error;
   }
 
-  final String getToken() {
+  public final String getToken() {
     return this.token;
   }
 

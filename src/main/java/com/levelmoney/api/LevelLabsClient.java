@@ -1,5 +1,9 @@
-package com.mcordero.interviews.models.api;
+package com.levelmoney.api;
 
+import com.levelmoney.api.models.LoginResponse;
+import com.levelmoney.api.models.Transaction;
+import com.levelmoney.api.models.TransactionResponse;
+import com.levelmoney.api.models.TransactionsRequest;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;

@@ -1,4 +1,4 @@
-package com.mcordero.interviews.models.api;
+package com.levelmoney.api.models;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -11,7 +11,7 @@ public class TransactionsRequest {
   private boolean jsonStrictMode = true;
   private boolean jsonVerbostResponse = true;
 
-  TransactionsRequest(final int uid, final String apiToken, final String token) {
+  public TransactionsRequest(final int uid, final String apiToken, final String token) {
     this.uid = uid;
     this.token = token;
     this.apiToken = apiToken;
