@@ -1,4 +1,4 @@
-package com.mcordero.interviews;
+package com.mcordero.interviews.models.api;
 
 import javax.json.JsonObject;
 import java.text.ParseException;
@@ -6,9 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+/**
+ * Transaction from the API.
+ */
 public class Transaction {
 
-  private static int CENTOCENTS_CONVERSION_VALUE = 10000;
+  private static final int CENTOCENTS_CONVERSION_VALUE = 10000;
 
   private double amount;
   private boolean isPending;
@@ -21,13 +24,13 @@ public class Transaction {
   private String merchant;
   private Calendar transactionTime;
 
-  Transaction(JsonObject jsonObject) {
+  public Transaction(final JsonObject jsonObject) {
     this.amount = jsonObject.getInt("amount") / CENTOCENTS_CONVERSION_VALUE;
     this.isPending = jsonObject.getBoolean("is-pending");
     this.aggregationTime = Calendar.getInstance();
-    this.aggregationTime.setTimeInMillis((long)jsonObject.getInt("aggregation-time"));
+    this.aggregationTime.setTimeInMillis((long) jsonObject.getInt("aggregation-time"));
     this.clearDate = Calendar.getInstance();
-    this.clearDate.setTimeInMillis((long)jsonObject.getInt("clear-date"));
+    this.clearDate.setTimeInMillis((long) jsonObject.getInt("clear-date"));
     this.accountId = jsonObject.getString("account-id");
     this.transactionId = jsonObject.getString("transaction-id");
     this.rawMerchant = jsonObject.getString("raw-merchant");
@@ -35,9 +38,9 @@ public class Transaction {
     this.merchant = jsonObject.getString("merchant");
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-    TimeZone UTC = TimeZone.getTimeZone("UTC");
-    TimeZone.setDefault(UTC);
-    sdf.setTimeZone(UTC);
+    TimeZone utc = TimeZone.getTimeZone("UTC");
+    TimeZone.setDefault(utc);
+    sdf.setTimeZone(utc);
 
     this.transactionTime = Calendar.getInstance();
 
@@ -51,44 +54,44 @@ public class Transaction {
     }
   }
 
-  public double getAmount() {
-    return amount;
+  public final double getAmount() {
+    return this.amount;
   }
 
-  public boolean isPending() {
-    return isPending;
+  public final boolean isPending() {
+    return this.isPending;
   }
 
-  public Calendar getAggregationTime() {
-    return aggregationTime;
+  public final Calendar getAggregationTime() {
+    return this.aggregationTime;
   }
 
-  public Calendar getClearDate() {
-    return clearDate;
+  public final Calendar getClearDate() {
+    return this.clearDate;
   }
 
-  public String getAccountId() {
-    return accountId;
+  public final String getAccountId() {
+    return this.accountId;
   }
 
-  public String getTransactionId() {
-    return transactionId;
+  public final String getTransactionId() {
+    return this.transactionId;
   }
 
-  public String getRawMerchant() {
-    return rawMerchant;
+  public final String getRawMerchant() {
+    return this.rawMerchant;
   }
 
-  public String getCategorization() {
-    return categorization;
+  public final String getCategorization() {
+    return this.categorization;
   }
 
-  public String getMerchant() {
-    return merchant;
+  public final String getMerchant() {
+    return this.merchant;
   }
 
-  public Calendar getTransactionTime() {
-    return transactionTime;
+  public final Calendar getTransactionTime() {
+    return this.transactionTime;
   }
 
 }
