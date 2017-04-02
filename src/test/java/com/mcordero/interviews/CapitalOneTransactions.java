@@ -7,7 +7,7 @@ package com.mcordero.interviews;
 //import org.junit.*;
 
 /**
- * CapitalOneTransactions class unit tests.
+ * Main class unit tests.
  *
  * @version 1.0.0
  */

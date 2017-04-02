@@ -35,4 +35,4 @@ jar {
   }
 }
 
-mainClassName = 'com.mcordero.interviews.CapitalOneTransactions'
+mainClassName = 'com.mcordero.interviews.Main'
