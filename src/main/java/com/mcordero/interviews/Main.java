@@ -1,13 +1,18 @@
 
 package com.mcordero.interviews;
 
+import com.google.gson.GsonBuilder;
 import com.mcordero.interviews.models.LabeledSummary;
 import com.mcordero.interviews.models.api.Transaction;
 import com.mcordero.interviews.models.Summary;
+import com.mcordero.interviews.models.api.TransactionsRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,33 +43,59 @@ public final class Main {
    * @param args Command line arguments
    */
   public static void main(final String[] args) {
-    //Created file by running the curl command. --because could not get past API {error: no api-token}--
-    // curl -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST -d '{"args": {"uid": 1110590645,
-    //"token": "115D786878A5B25FB044E836D1612597", "api-token": "AppTokenForInterview", "json-strict-mode": false,
-    //"json-verbose-response": false}}' https://2016.api.levelmoney.com/api/v2/core/get-all-transactions > dataFile.txt
-    File file = new File("./dataFile.json");
+
+    Map<String, List<Transaction>> monthTransactionMap = getTransactions();
+
+    List<LabeledSummary> summaries = monthTransactionMap
+      .entrySet()
+      .stream()
+      .map(s -> buildSummary(s.getKey(), s.getValue()))
+      .collect(Collectors.toList());
+
+    summaries.add(buildAverageSummary(summaries));
+
+    summaries.forEach(System.out::println);
+
+  }
+
+  private static Map<String, List<Transaction>> getTransactions() {
+    HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+    HttpClient client = clientBuilder.build();
+    HttpPost postRequest = new HttpPost("https://2016.api.levelmoney.com/api/v2/core/get-all-transactions");
+    postRequest.setHeader("accept", "application/json");
+    postRequest.setHeader("content-type", "application/json");
+
+    TransactionsRequest r = new TransactionsRequest(
+      1110590645,
+      "115D786878A5B25FB044E836D1612597",
+      "AppTokenForInterview",
+      true,
+      true
+    );
 
     try {
-      InputStream targetStream = new FileInputStream(file);
+      postRequest.setEntity(new StringEntity(r.toString()));
+
+      String pr = new GsonBuilder().setPrettyPrinting().create().toJson(r.toJson());
+      System.out.println("Sending request: " + pr);
+      System.out.println();
+
+      HttpResponse response = client.execute(postRequest);
+      if (response.getStatusLine().getStatusCode() != 200) {
+        throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+      }
+
+      InputStream targetStream = new BufferedInputStream((response.getEntity().getContent()));
       JsonReader rdr = Json.createReader(targetStream);
       JsonObject obj = rdr.readObject();
+
       JsonArray results = obj.getJsonArray("transactions");
 
-      Map<String, List<Transaction>> monthTransactionMap = buildMonthTransactionMap(results);
-
-      List<LabeledSummary> summaries = monthTransactionMap
-        .entrySet()
-        .stream()
-        .map(s -> buildSummary(s.getKey(), s.getValue()))
-        .collect(Collectors.toList());
-
-      summaries.add(buildAverageSummary(summaries));
-
-      summaries.forEach(System.out::println);
-
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      return buildMonthTransactionMap(results);
+    } catch (Exception e) {
+      throw new RuntimeException("Error sending the request", e);
     }
+
   }
 
   /**
